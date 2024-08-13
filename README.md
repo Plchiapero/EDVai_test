@@ -3,6 +3,7 @@ Probando GitHub
 
 Actualizacion: vamos a probar el primer Commit
 
+##Vamos a cargar las instrucciones vistas en la clase 3
 plchiapero@LAPTOP-HJNIQGOK:~$ docker run --name edvai_hadoop -p 8081:8081 -p 8080:8080 -p 8088:8088 -p 8889:8889 -p 9870:9870 -p 9868:9868 -p 9864:9864 -p 1527:1527 -p 10000:10000 -p 10002:10002 -p 8010:8010 -p 9093:9093 -p 2181:2182 -it --restart unless-stopped fedepineyro/edvai_ubuntu:v6 /bin/bash -c "/home/hadoop/scripts/start-services.sh"
  * Starting OpenBSD Secure Shell server sshd                                                                     [ OK ]
  * Starting PostgreSQL 12 database server                                                                        [ OK ]
