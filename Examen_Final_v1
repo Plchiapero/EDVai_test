@@ -1,0 +1,124 @@
+##Ingestamos los archivos relacionados con transporte aéreo de Argentina con WGET desde:
+2021:
+https://dataengineerpublic.blob.core.windows.net/data-engineer/2021-informe-ministerio.csv
+2022:
+https://dataengineerpublic.blob.core.windows.net/data-engineer/202206-informe-ministerio.csv
+Aeropuertos_detalles:
+https://dataengineerpublic.blob.core.windows.net/data-engineer/aeropuertos_detalle.csv
+
+##Los enviamos a hdfs y ferificamos que se encuentran en la carpeta /ingest
+plchiapero@LAPTOP-HJNIQGOK:~$ docker exec -it edvai_hadoop /bin/bash
+root@7b946e8f971d:/# su hadoop
+hadoop@7b946e8f971d:/$ hdfs dfs -ls /ingest/
+Found 4 items
+-rw-r--r--   1 hadoop supergroup   32322556 2024-09-29 17:21 /ingest/2021-informe-ministerio.csv
+-rw-r--r--   1 hadoop supergroup   22833520 2024-09-29 18:09 /ingest/202206-informe-ministerio.csv
+-rw-r--r--   1 hadoop supergroup     136007 2024-09-29 18:10 /ingest/aeropuertos_detalle.csv
+
+##Cambiamos la separación de los datos de los archivos de ";" a ","
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /__ / .__/\_,_/_/ /_/\_\   version 3.2.0
+      /_/
+
+Using Python version 3.8.10 (default, Mar 15 2022 12:22:08)
+Spark context Web UI available at http://7b946e8f971d:4040
+Spark context available as 'sc' (master = yarn, app id = application_1727916311286_0001).
+SparkSession available as 'spark'.
+
+>>> df2022 = spark.read.option("header", "true").option("sep", ";").csv("/ingest/202206-informe-ministerio.csv")
+>>> df2021 = spark.read.option("header", "true").option("sep", ";").csv("/ingest/2021-informe-ministerio.csv")
+>>> df2022.printSchema()
+root
+ |-- Fecha: string (nullable = true)
+ |-- Hora UTC: string (nullable = true)
+ |-- Clase de Vuelo (todos los vuelos): string (nullable = true)
+ |-- Clasificación Vuelo: string (nullable = true)
+ |-- Tipo de Movimiento: string (nullable = true)
+ |-- Aeropuerto: string (nullable = true)
+ |-- Origen / Destino: string (nullable = true)
+ |-- Aerolinea Nombre: string (nullable = true)
+ |-- Aeronave: string (nullable = true)
+ |-- Pasajeros: string (nullable = true)
+ |-- Calidad dato: string (nullable = true)
+
+>>> df2021.printSchema()
+root
+ |-- Fecha: string (nullable = true)
+ |-- Hora UTC: string (nullable = true)
+ |-- Clase de Vuelo (todos los vuelos): string (nullable = true)
+ |-- Clasificación Vuelo: string (nullable = true)
+ |-- Tipo de Movimiento: string (nullable = true)
+ |-- Aeropuerto: string (nullable = true)
+ |-- Origen / Destino: string (nullable = true)
+ |-- Aerolinea Nombre: string (nullable = true)
+ |-- Aeronave: string (nullable = true)
+ |-- Pasajeros: string (nullable = true)
+ |-- Calidad dato: string (nullable = true)
+
+##Unimos las dos tablas con UNION
+>>> df_2122 = df2021.union(df2022)
+
+##Creamos una vista de esa nueva tabla
+>>> df_2122.createOrReplaceTempView("df_2122_v")
+
+##Casteamos y verificamos los cambios con printSchema y show
+>>> from pyspark.sql.functions import to_date, col
+>>> df_2122_cast = df_2122.withColumn("fecha", to_date(col("fecha"), "dd/MM/yyyy")).withColumn("pasajeros", col("pasajeros").cast("int"))
+>>> df_2122_cast.printSchema()
+root
+ |-- fecha: date (nullable = true)
+ |-- Hora UTC: string (nullable = true)
+ |-- Clase de Vuelo (todos los vuelos): string (nullable = true)
+ |-- Clasificación Vuelo: string (nullable = true)
+ |-- Tipo de Movimiento: string (nullable = true)
+ |-- Aeropuerto: string (nullable = true)
+ |-- Origen / Destino: string (nullable = true)
+ |-- Aerolinea Nombre: string (nullable = true)
+ |-- Aeronave: string (nullable = true)
+ |-- pasajeros: integer (nullable = true)
+ |-- Calidad dato: string (nullable = true)
+
+>>> df_2122_cast.show(10)
++----------+--------+---------------------------------+-------------------+------------------+----------+----------------+--------------------+----------------+---------+------------+
+|     fecha|Hora UTC|Clase de Vuelo (todos los vuelos)|Clasificación Vuelo|Tipo de Movimiento|Aeropuerto|Origen / Destino|    Aerolinea Nombre|        Aeronave|pasajeros|Calidad dato|
++----------+--------+---------------------------------+-------------------+------------------+----------+----------------+--------------------+----------------+---------+------------+
+|2021-01-01|   00:02|             Vuelo Privado con...|          Domestico|          Despegue|       PAR|             ROS|                   0|    PA-PA-28-181|        0|  DEFINITIVO|
+|2021-01-01|   00:24|                          Regular|          Domestico|        Aterrizaje|       EZE|             GRA|AEROLINEAS ARGENT...|     BO-B737-8MB|       70|  DEFINITIVO|
+|2021-01-01|   00:26|                          Regular|          Domestico|        Aterrizaje|       EZE|             ECA|AEROLINEAS ARGENT...|      BO-737-800|       70|  DEFINITIVO|
+|2021-01-01|   00:29|                          Regular|          Domestico|        Aterrizaje|       EZE|             SAL|AEROLINEAS ARGENT...|    BO-B-737-76N|       12|  DEFINITIVO|
+
+##Generamos una vista de este nuevo df
+>>> df_2122_cast.createOrReplaceTempView("df_2122_cast_v")
+
+##Casteamos de acuerdo a lo solicitado en el punto del Schema 
+>>> df_cast_nombres = spark.sql("""select cast(fecha as date), cast("Hora UTC" as string) as horaUTC, cast("Clase de Vuelo (todos los vuelos)" as string) as clase_de_vuelo, cast("Clasificación Vuelo" as string)as clasificacion_de_vuelo, cast("Tipo de Movimiento" as string)as tipo_de_movimiento, cast(Aeropuerto as string)as aeropuerto, cast("Origen / Destino" as string)as origen_destino, cast("Aerolinea Nombre" as string)as aerolinea_nombre, cast(Aeronave as string) as aeronave, cast(pasajeros as int) from df_2122_cast_v""")
+>>> df_cast_nombres.printSchema()
+root
+ |-- fecha: date (nullable = true)
+ |-- horaUTC: string (nullable = false)
+ |-- clase_de_vuelo: string (nullable = false)
+ |-- clasificacion_de_vuelo: string (nullable = false)
+ |-- tipo_de_movimiento: string (nullable = false)
+ |-- aeropuerto: string (nullable = true)
+ |-- origen_destino: string (nullable = false)
+ |-- aerolinea_nombre: string (nullable = false)
+ |-- aeronave: string (nullable = true)
+ |-- pasajeros: integer (nullable = true)
+
+>>> df_cast_nombres.show(2)
++----------+--------+--------------------+----------------------+------------------+----------+----------------+----------------+------------+---------+
+|     fecha| horaUTC|      clase_de_vuelo|clasificacion_de_vuelo|tipo_de_movimiento|aeropuerto|  origen_destino|aerolinea_nombre|    aeronave|pasajeros|
++----------+--------+--------------------+----------------------+------------------+----------+----------------+----------------+------------+---------+
+|2021-01-01|Hora UTC|Clase de Vuelo (t...|   Clasificación Vuelo|Tipo de Movimiento|       PAR|Origen / Destino|Aerolinea Nombre|PA-PA-28-181|        0|
+|2021-01-01|Hora UTC|Clase de Vuelo (t...|   Clasificación Vuelo|Tipo de Movimiento|       EZE|Origen / Destino|Aerolinea Nombre| BO-B737-8MB|       70|
++----------+--------+--------------------+----------------------+------------------+----------+----------------+----------------+------------+---------+
+only showing top 2 rows
+
+>>> df_cast_nombres.createOrReplaceTempView("df_2122_cast_v_final")
+
+df_cast_nombres = spark.sql("""SELECT CAST(fecha AS DATE) AS fecha, CAST(Hora_UTC AS STRING) AS hora_UTC, CAST("Clase de Vuelo (todos los vuelos)" AS STRING) AS clase_de_vuelo,CAST(Clasificación_Vuelo AS STRING) AS clasificacion_de_vuelo, CAST(Tipo_de_Movimiento AS STRING) AS tipo_de_movimiento, CAST(Aeropuerto AS STRING) AS aeropuerto, CAST("Origen / Destino" AS STRING) AS origen_destino, CAST(Aerolinea_Nombre AS STRING) AS aerolinea_nombre, CAST(Aeronave AS STRING) AS aeronave, CAST(pasajeros AS INT) AS pasajeros FROM df_2122_cast_v""")
+
+
