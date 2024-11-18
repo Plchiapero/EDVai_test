@@ -15,6 +15,8 @@ Found 4 items
 -rw-r--r--   1 hadoop supergroup   22833520 2024-09-29 18:09 /ingest/202206-informe-ministerio.csv
 -rw-r--r--   1 hadoop supergroup     136007 2024-09-29 18:10 /ingest/aeropuertos_detalle.csv
 
+hadoop@7b946e8f971d:/$ pyspark
+
 ##Cambiamos la separación de los datos de los archivos de ";" a ","
 Welcome to
       ____              __
