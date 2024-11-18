@@ -6,7 +6,7 @@ https://dataengineerpublic.blob.core.windows.net/data-engineer/202206-informe-mi
 Aeropuertos_detalles:
 https://dataengineerpublic.blob.core.windows.net/data-engineer/aeropuertos_detalle.csv
 
-##Los enviamos a hdfs y ferificamos que se encuentran en la carpeta /ingest
+##Los enviamos a hdfs y verificamos que se encuentran en la carpeta /ingest
 plchiapero@LAPTOP-HJNIQGOK:~$ docker exec -it edvai_hadoop /bin/bash
 root@7b946e8f971d:/# su hadoop
 hadoop@7b946e8f971d:/$ hdfs dfs -ls /ingest/
