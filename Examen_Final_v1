@@ -96,30 +96,59 @@ root
 >>> df_2122_cast.createOrReplaceTempView("df_2122_cast_v")
 
 ##Casteamos de acuerdo a lo solicitado en el punto del Schema 
->>> df_cast_nombres = spark.sql("""select cast(fecha as date), cast("Hora UTC" as string) as horaUTC, cast("Clase de Vuelo (todos los vuelos)" as string) as clase_de_vuelo, cast("Clasificación Vuelo" as string)as clasificacion_de_vuelo, cast("Tipo de Movimiento" as string)as tipo_de_movimiento, cast(Aeropuerto as string)as aeropuerto, cast("Origen / Destino" as string)as origen_destino, cast("Aerolinea Nombre" as string)as aerolinea_nombre, cast(Aeronave as string) as aeronave, cast(pasajeros as int) from df_2122_cast_v""")
+>>> df_cast_nombres = spark.sql("SELECT to_date(fecha, 'dd/MM/yyyy') AS date, CAST(`Hora UTC` AS STRING) AS hora_utc, CAST(`Clase de Vuelo (todos los vuelos)` AS STRING) AS clase_de_vuelo, CAST(`Clasificación Vuelo` AS STRING) AS clasificacion_de_vuelo, CAST(`Tipo de Movimiento` AS STRING) AS tipo_de_movimiento, CAST(aeropuerto AS STRING) AS aeropuerto, CAST(`Origen / Destino` AS STRING) AS origen_destino, CAST(`Aerolinea Nombre` AS STRING) AS aerolinea_nombre, CAST(aeronave AS STRING) AS aeronave, COALESCE(CAST(pasajeros AS INTEGER), 0) AS pasajeros FROM df_2122_cast_v")
 >>> df_cast_nombres.printSchema()
 root
- |-- fecha: date (nullable = true)
- |-- horaUTC: string (nullable = false)
- |-- clase_de_vuelo: string (nullable = false)
- |-- clasificacion_de_vuelo: string (nullable = false)
- |-- tipo_de_movimiento: string (nullable = false)
+ |-- date: date (nullable = true)
+ |-- hora_utc: string (nullable = true)
+ |-- clase_de_vuelo: string (nullable = true)
+ |-- clasificacion_de_vuelo: string (nullable = true)
+ |-- tipo_de_movimiento: string (nullable = true)
  |-- aeropuerto: string (nullable = true)
- |-- origen_destino: string (nullable = false)
- |-- aerolinea_nombre: string (nullable = false)
+ |-- origen_destino: string (nullable = true)
+ |-- aerolinea_nombre: string (nullable = true)
  |-- aeronave: string (nullable = true)
- |-- pasajeros: integer (nullable = true)
+ |-- pasajeros: integer (nullable = false)
 
 >>> df_cast_nombres.show(2)
-+----------+--------+--------------------+----------------------+------------------+----------+----------------+----------------+------------+---------+
-|     fecha| horaUTC|      clase_de_vuelo|clasificacion_de_vuelo|tipo_de_movimiento|aeropuerto|  origen_destino|aerolinea_nombre|    aeronave|pasajeros|
-+----------+--------+--------------------+----------------------+------------------+----------+----------------+----------------+------------+---------+
-|2021-01-01|Hora UTC|Clase de Vuelo (t...|   Clasificación Vuelo|Tipo de Movimiento|       PAR|Origen / Destino|Aerolinea Nombre|PA-PA-28-181|        0|
-|2021-01-01|Hora UTC|Clase de Vuelo (t...|   Clasificación Vuelo|Tipo de Movimiento|       EZE|Origen / Destino|Aerolinea Nombre| BO-B737-8MB|       70|
-+----------+--------+--------------------+----------------------+------------------+----------+----------------+----------------+------------+---------+
++----------+--------+--------------------+----------------------+------------------+----------+--------------+--------------------+------------+---------+
+|      date|hora_utc|      clase_de_vuelo|clasificacion_de_vuelo|tipo_de_movimiento|aeropuerto|origen_destino|    aerolinea_nombre|    aeronave|pasajeros|
++----------+--------+--------------------+----------------------+------------------+----------+--------------+--------------------+------------+---------+
+|2021-01-01|   00:02|Vuelo Privado con...|             Domestico|          Despegue|       PAR|           ROS|                   0|PA-PA-28-181|        0|
+|2021-01-01|   00:24|             Regular|             Domestico|        Aterrizaje|       EZE|           GRA|AEROLINEAS ARGENT...| BO-B737-8MB|       70|
++----------+--------+--------------------+----------------------+------------------+----------+--------------+--------------------+------------+---------+
 only showing top 2 rows
 
 >>> df_cast_nombres.createOrReplaceTempView("df_2122_cast_v_final")
+>>> spark.sql("DESCRIBE df_2122_cast_v_final").show()
++--------------------+---------+-------+
+|            col_name|data_type|comment|
++--------------------+---------+-------+
+|                date|     date|   null|
+|            hora_utc|   string|   null|
+|      clase_de_vuelo|   string|   null|
+|clasificacion_de_...|   string|   null|
+|  tipo_de_movimiento|   string|   null|
+|          aeropuerto|   string|   null|
+|      origen_destino|   string|   null|
+|    aerolinea_nombre|   string|   null|
+|            aeronave|   string|   null|
+|           pasajeros|      int|   null|
++--------------------+---------+-------+
+
+## En HIVE, damos de alta la BD que llamamos examen_final, luego chequeamos el alta correcta, y finalmente elegimos usar la BD que dimos de alta
+
+hive> create database examen_final;
+hive> show databases;
+OK
+examen_final
+Time taken: 0.027 seconds, Fetched: 1 row(s)
+hive> use examen_final;
+OK
+
+##Damos de alta la tabla 
+
+XXXXXXX
 
 df_cast_nombres = spark.sql("""SELECT CAST(fecha AS DATE) AS fecha, CAST(Hora_UTC AS STRING) AS hora_UTC, CAST("Clase de Vuelo (todos los vuelos)" AS STRING) AS clase_de_vuelo,CAST(Clasificación_Vuelo AS STRING) AS clasificacion_de_vuelo, CAST(Tipo_de_Movimiento AS STRING) AS tipo_de_movimiento, CAST(Aeropuerto AS STRING) AS aeropuerto, CAST("Origen / Destino" AS STRING) AS origen_destino, CAST(Aerolinea_Nombre AS STRING) AS aerolinea_nombre, CAST(Aeronave AS STRING) AS aeronave, CAST(pasajeros AS INT) AS pasajeros FROM df_2122_cast_v""")
 
