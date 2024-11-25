@@ -163,7 +163,77 @@ DataFrame[]
 >>>
 
 #Chequeo que en hive esté la tabla
+hive> select * from aeropuerto_tabla limit 10;
+OK
+2021-01-01      00:02   Vuelo Privado con Matrícula Nacional    Domestico       Despegue        PAR
+ROS     0       PA-PA-28-181    0
+2021-01-01      00:24   Regular Domestico       Aterrizaje      EZE     GRA     AEROLINEAS ARGENTINAS SABO-B737-8MB     70
+2021-01-01      00:26   Regular Domestico       Aterrizaje      EZE     ECA     AEROLINEAS ARGENTINAS SABO-737-800      70
+2021-01-01      00:29   Regular Domestico       Aterrizaje      EZE     SAL     AEROLINEAS ARGENTINAS SABO-B-737-76N    12
+2021-01-01      00:37   Regular Domestico       Aterrizaje      EZE     TUC     AEROLINEAS ARGENTINAS SAEMB-ERJ190100IGW        26
+2021-01-01      00:59   Regular Internacional   Aterrizaje      EZE     SBGR    TURK HAVA YOLLARI (TURKISH AIRLINES CO.)        0       62
+2021-01-01      01:00   Vuelo Privado con Matrícula Nacional    Domestico       Aterrizaje      ROS
+PAR     0       PA-PA-28-181    0
+2021-01-01      01:12   Regular Internacional   Despegue        EZE     MMMX    AEROVIAS DE MEXICO - AEROMEXICO 0       198
+2021-01-01      01:52   Regular Internacional   Despegue        EZE     KDFW    AMERICAN AIRLINES INC.
+0       193
+2021-01-01      02:08   Regular Internacional   Despegue        EZE     KMIA    AMERICAN AIRLINES INC.
+0       255
+Time taken: 1.364 seconds, Fetched: 10 row(s)
+hive> describe aeropuerto_tabla;
+OK
+fecha                   date
+hora_utc                string
+clase_de_vuelo          string
+clasificacion_de_vuelo  string
+tipo_de_movimiento      string
+aeropuerto              string
+origen_destino          string
+aerolinea_nombre        string
+aeronave                string
+pasajeros               int
+Time taken: 0.071 seconds, Fetched: 10 row(s)
+hive> describe formatted aeropuerto_tabla;
+OK
+# col_name              data_type               comment
 
+fecha                   date
+hora_utc                string
+clase_de_vuelo          string
+clasificacion_de_vuelo  string
+tipo_de_movimiento      string
+aeropuerto              string
+origen_destino          string
+aerolinea_nombre        string
+aeronave                string
+pasajeros               int
+
+# Detailed Table Information
+Database:               examen_final
+Owner:                  hadoop
+CreateTime:             Sun Nov 24 19:56:01 ART 2024
+LastAccessTime:         UNKNOWN
+Retention:              0
+Location:               hdfs://172.17.0.2:9000/tables/external/examen_final
+Table Type:             EXTERNAL_TABLE
+Table Parameters:
+        EXTERNAL                TRUE
+        numFiles                8
+        totalSize               55879352
+        transient_lastDdlTime   1732489158
+
+# Storage Information
+SerDe Library:          org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+InputFormat:            org.apache.hadoop.mapred.TextInputFormat
+OutputFormat:           org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+Compressed:             No
+Num Buckets:            -1
+Bucket Columns:         []
+Sort Columns:           []
+Storage Desc Params:
+        field.delim             ,
+        serialization.format    ,
+Time taken: 0.1 seconds, Fetched: 38 row(s)
 XXXXXXX
 
 df_cast_nombres = spark.sql("""SELECT CAST(fecha AS DATE) AS fecha, CAST(Hora_UTC AS STRING) AS hora_UTC, CAST("Clase de Vuelo (todos los vuelos)" AS STRING) AS clase_de_vuelo,CAST(Clasificación_Vuelo AS STRING) AS clasificacion_de_vuelo, CAST(Tipo_de_Movimiento AS STRING) AS tipo_de_movimiento, CAST(Aeropuerto AS STRING) AS aeropuerto, CAST("Origen / Destino" AS STRING) AS origen_destino, CAST(Aerolinea_Nombre AS STRING) AS aerolinea_nombre, CAST(Aeronave AS STRING) AS aeronave, CAST(pasajeros AS INT) AS pasajeros FROM df_2122_cast_v""")
