@@ -147,6 +147,22 @@ hive> use examen_final;
 OK
 
 ##Damos de alta la tabla 
+hive> CREATE EXTERNAL TABLE IF NOT EXISTS examen_final.aeropuerto_tabla (fecha date, hora_utc string, clase_de_vuelo string, clasificacion_de_vuelo string, tipo_de_movimiento string, aeropuerto string, origen_destino string, aerolinea_nombre string, aeronave string, pasajeros int)
+    > row format delimited
+    > fields terminated by ','
+    > location '/tables/external/examen_final';
+OK
+Time taken: 0.863 seconds
+hive>
+
+##Vuelvo a spark, y envío la vista del df a hive
+
+>>> spark.sql("insert into examen_final.aeropuerto_tabla select * from df_2122_cast_v_final")
+2024-11-24 19:59:11,787 WARN session.SessionState: METASTORE_FILTER_HOOK will be ignored, since hive.security.authorization.manager is set to instance of HiveAuthorizerFactory.
+DataFrame[]
+>>>
+
+#Chequeo que en hive esté la tabla
 
 XXXXXXX
 
