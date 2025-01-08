@@ -119,6 +119,7 @@ root
 +----------+--------+--------------------+----------------------+------------------+----------+--------------+--------------------+------------+---------+
 only showing top 2 rows
 
+##Creamos una vista de esa nueva tabla
 >>> df_cast_nombres.createOrReplaceTempView("df_2122_cast_v_final")
 >>> spark.sql("DESCRIBE df_2122_cast_v_final").show()
 +--------------------+---------+-------+
@@ -238,12 +239,16 @@ Time taken: 0.1 seconds, Fetched: 38 row(s)
 
 ----------------------------------------
 ----------------------------------------
+----------------------------------------
+----------------------------------------
+----------------------------------------
+----------------------------------------
 
 ### Vamos a repetir lo mismo realizado, para obtener la tabla segun Schema 2
 
 ##Cambiamos la separación de los datos de los archivos de ";" a "," Y habilitamos a que lea los emcabezados
 >>> df = spark.read.option("header", "true").option("sep", ";").csv("/ingest/aeropuertos_detalle.csv")
->>> df = printSchema()
+>>> df.printSchema()
 
 ##Verificamos
 root
@@ -319,6 +324,18 @@ root
 
 ##Creamos una vista de esa nueva tabla
 >>> df_2.createOrReplaceTempView("df2_v")
+
+##Damos de alta la tabla 
+hive> CREATE EXTERNAL TABLE IF NOT EXISTS examen_final.aeropuerto_detalle_tabla (aeropuerto string, oac string, iata string, tipo string, denominacion string, coordenadas string, latitud string, longitud string, elev float, uom_elev string, ref string, distancia_ref float, direccion_ref float, condicion string, control string, region string, uso string, trafico string, sna string, concesionado string, provincia string)
+    > row format delimited
+    > fields terminated by ','
+    > location 'hdfs://172.17.0.2:9000/tables/external/examen_final';
+OK
+Time taken: 0.139 seconds;
+
+##Enviamos la tabla a HIVE
+
+>>> spark.sql("insert into examen_final.aeropuerto_detalle_tabla select * from df2_v")
 
 
 df_cast_nombres = spark.sql("""SELECT CAST(fecha AS DATE) AS fecha, CAST(Hora_UTC AS STRING) AS hora_UTC, CAST("Clase de Vuelo (todos los vuelos)" AS STRING) AS clase_de_vuelo,CAST(Clasificación_Vuelo AS STRING) AS clasificacion_de_vuelo, CAST(Tipo_de_Movimiento AS STRING) AS tipo_de_movimiento, CAST(Aeropuerto AS STRING) AS aeropuerto, CAST("Origen / Destino" AS STRING) AS origen_destino, CAST(Aerolinea_Nombre AS STRING) AS aerolinea_nombre, CAST(Aeronave AS STRING) AS aeronave, CAST(pasajeros AS INT) AS pasajeros FROM df_2122_cast_v""")
