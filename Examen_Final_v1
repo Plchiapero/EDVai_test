@@ -119,8 +119,11 @@ root
 +----------+--------+--------------------+----------------------+------------------+----------+--------------+--------------------+------------+---------+
 only showing top 2 rows
 
-##Creamos una vista de esa nueva tabla
+
 >>> df_cast_nombres.createOrReplaceTempView("df_2122_cast_v_final")
+
+##Chequeamos la vista generada usando SQL 
+
 >>> spark.sql("DESCRIBE df_2122_cast_v_final").show()
 +--------------------+---------+-------+
 |            col_name|data_type|comment|
