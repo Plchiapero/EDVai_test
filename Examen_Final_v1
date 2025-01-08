@@ -155,7 +155,7 @@ OK
 hive> CREATE EXTERNAL TABLE IF NOT EXISTS examen_final.aeropuerto_tabla (fecha date, hora_utc string, clase_de_vuelo string, clasificacion_de_vuelo string, tipo_de_movimiento string, aeropuerto string, origen_destino string, aerolinea_nombre string, aeronave string, pasajeros int)
     > row format delimited
     > fields terminated by ','
-    > location '/tables/external/examen_final';
+    > location '/tables/external/examen_final/aeropuerto_tabla';
 OK
 Time taken: 0.863 seconds
 hive>
@@ -325,7 +325,68 @@ root
 ##Creamos una vista de esa nueva tabla
 >>> df_2.createOrReplaceTempView("df2_v")
 
+##Damos de alta la tabla 
+hive> CREATE EXTERNAL TABLE IF NOT EXISTS examen_final.aeropuerto_detalles_tabla (
+aeropuerto STRING,
+    ref STRING,
+    denominacion STRING,
+    latitud STRING,
+    longitud STRING,
+    distancia_ref FLOAT,
+    direccion_ref STRING,
+    condicion STRING,
+    uso STRING,
+    concesionado STRING,
+    provincia STRING
+)
+      row format delimited
+      fields terminated by ','
+      location '/tables/external/examen_final/aeropuerto_detalles_tabla';
+
 
 df_cast_nombres = spark.sql("""SELECT CAST(fecha AS DATE) AS fecha, CAST(Hora_UTC AS STRING) AS hora_UTC, CAST("Clase de Vuelo (todos los vuelos)" AS STRING) AS clase_de_vuelo,CAST(Clasificación_Vuelo AS STRING) AS clasificacion_de_vuelo, CAST(Tipo_de_Movimiento AS STRING) AS tipo_de_movimiento, CAST(Aeropuerto AS STRING) AS aeropuerto, CAST("Origen / Destino" AS STRING) AS origen_destino, CAST(Aerolinea_Nombre AS STRING) AS aerolinea_nombre, CAST(Aeronave AS STRING) AS aeronave, CAST(pasajeros AS INT) AS pasajeros FROM df_2122_cast_v""")
 
+******************
+*******************
+******************
+*******************
+******************
+*******************
+******************
+*******************
 
+DROP TABLE IF EXISTS examen_final.aeropuerto_detalle_tabla;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS examen_final.aeropuerto_detalles_tabla (
+    aeropuerto STRING, oac STRING, iata STRING, tipo STRING, denominacion STRING,
+    coordenadas STRING, latitud STRING, longitud STRING, elev FLOAT, uom_elev STRING,
+    ref STRING, distancia_ref FLOAT, direccion_ref STRING, condicion STRING,
+    control STRING, region STRING, uso STRING, trafico STRING, sna STRING,
+    concesionado STRING, provincia STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION '/tables/external/examen_final/aeropuerto_detalle_tabla';
+
+
+DROP TABLE IF EXISTS examen_final.aeropuerto_tabla;
+CREATE EXTERNAL TABLE IF NOT EXISTS examen_final.aeropuerto_tabla (
+    fecha DATE,
+    hora_utc STRING,
+    clase_de_vuelo STRING,
+    clasificacion_de_vuelo STRING,
+    tipo_de_movimiento STRING,
+    aeropuerto STRING,
+    origen_destino STRING,
+    aerolinea_nombre STRING,
+    aeronave STRING,
+    pasajeros INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION '/tables/external/examen_final/aeropuerto_tabla';
+
+
+
+spark.sql("insert into examen_final.aeropuerto_tabla select * from df_2122_cast_v_final")
+spark.sql("insert into examen_final.aeropuerto_detalles_tabla select * from df2_v")
