@@ -168,7 +168,7 @@ DataFrame[]
 >>>
 
 #Chequeo que en hive esté la tabla
-hive> select * from aeropuerto_tabla limit 10;
+      hive> select * from aeropuerto_tabla limit 10;
 OK
 2021-01-01      00:02   Vuelo Privado con Matrícula Nacional    Domestico       Despegue        PAR
 ROS     0       PA-PA-28-181    0
@@ -325,6 +325,16 @@ root
 ##Creamos una vista de esa nueva tabla
 >>> df_2.createOrReplaceTempView("df2_v")
 
+
+##Chequeamos la vista generada usando SQL 
+
+
+
+
+
+&&&&&&&
+
+=======
 ##Damos de alta la tabla 
 hive> CREATE EXTERNAL TABLE IF NOT EXISTS examen_final.aeropuerto_detalles_tabla (
 aeropuerto STRING,
