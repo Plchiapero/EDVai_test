@@ -168,7 +168,7 @@ DataFrame[]
 >>>
 
 #Chequeo que en hive esté la tabla
-hive> select * from aeropuerto_tabla limit 10;
+      hive> select * from aeropuerto_tabla limit 10;
 OK
 2021-01-01      00:02   Vuelo Privado con Matrícula Nacional    Domestico       Despegue        PAR
 ROS     0       PA-PA-28-181    0
@@ -324,6 +324,14 @@ root
 
 ##Creamos una vista de esa nueva tabla
 >>> df_2.createOrReplaceTempView("df2_v")
+
+##Chequeamos la vista generada usando SQL 
+
+
+
+
+
+&&&&&&&
 
 
 df_cast_nombres = spark.sql("""SELECT CAST(fecha AS DATE) AS fecha, CAST(Hora_UTC AS STRING) AS hora_UTC, CAST("Clase de Vuelo (todos los vuelos)" AS STRING) AS clase_de_vuelo,CAST(Clasificación_Vuelo AS STRING) AS clasificacion_de_vuelo, CAST(Tipo_de_Movimiento AS STRING) AS tipo_de_movimiento, CAST(Aeropuerto AS STRING) AS aeropuerto, CAST("Origen / Destino" AS STRING) AS origen_destino, CAST(Aerolinea_Nombre AS STRING) AS aerolinea_nombre, CAST(Aeronave AS STRING) AS aeronave, CAST(pasajeros AS INT) AS pasajeros FROM df_2122_cast_v""")
