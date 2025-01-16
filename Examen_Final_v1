@@ -99,7 +99,7 @@ root
 >>> df_cast_nombres = spark.sql("SELECT to_date(fecha, 'dd/MM/yyyy') AS fecha, CAST(`Hora UTC` AS STRING) AS hora_utc, CAST(`Clase de Vuelo (todos los vuelos)` AS STRING) AS clase_de_vuelo, CAST(`Clasificación Vuelo` AS STRING) AS clasificacion_de_vuelo, CAST(`Tipo de Movimiento` AS STRING) AS tipo_de_movimiento, CAST(aeropuerto AS STRING) AS aeropuerto, CAST(`Origen / Destino` AS STRING) AS origen_destino, CAST(`Aerolinea Nombre` AS STRING) AS aerolinea_nombre, CAST(aeronave AS STRING) AS aeronave, COALESCE(CAST(pasajeros AS INTEGER), 0) AS pasajeros FROM df_2122_cast_v")
 >>> df_cast_nombres.printSchema()
 root
- |-- date: date (nullable = true)
+ |-- fecha: date (nullable = true)
  |-- hora_utc: string (nullable = true)
  |-- clase_de_vuelo: string (nullable = true)
  |-- clasificacion_de_vuelo: string (nullable = true)
@@ -112,7 +112,7 @@ root
 
 >>> df_cast_nombres.show(2)
 +----------+--------+--------------------+----------------------+------------------+----------+--------------+--------------------+------------+---------+
-|      date|hora_utc|      clase_de_vuelo|clasificacion_de_vuelo|tipo_de_movimiento|aeropuerto|origen_destino|    aerolinea_nombre|    aeronave|pasajeros|
+|     fecha|hora_utc|      clase_de_vuelo|clasificacion_de_vuelo|tipo_de_movimiento|aeropuerto|origen_destino|    aerolinea_nombre|    aeronave|pasajeros|
 +----------+--------+--------------------+----------------------+------------------+----------+--------------+--------------------+------------+---------+
 |2021-01-01|   00:02|Vuelo Privado con...|             Domestico|          Despegue|       PAR|           ROS|                   0|PA-PA-28-181|        0|
 |2021-01-01|   00:24|             Regular|             Domestico|        Aterrizaje|       EZE|           GRA|AEROLINEAS ARGENT...| BO-B737-8MB|       70|
@@ -129,7 +129,7 @@ only showing top 2 rows
 +--------------------+---------+-------+
 |            col_name|data_type|comment|
 +--------------------+---------+-------+
-|                date|     date|   null|
+|               fecha|     date|   null|
 |            hora_utc|   string|   null|
 |      clase_de_vuelo|   string|   null|
 |clasificacion_de_...|   string|   null|
@@ -141,6 +141,59 @@ only showing top 2 rows
 |           pasajeros|      int|   null|
 +--------------------+---------+-------+
 
+##Generamos la vista filtrada segun solicitud punto 3
+>>>> df_2122_filter = spark.sql("select * from df_2122_cast_v_final where fecha >= '2021-01-01' and fecha <= '2022-06-30'")
+
+##Verificamos 
+>>> df_2122_filter.show()
+
++----------+--------+--------------------+----------------------+------------------+----------+--------------+--------------------+----------------+---------+
+|     fecha|hora_utc|      clase_de_vuelo|clasificacion_de_vuelo|tipo_de_movimiento|aeropuerto|origen_destino|    aerolinea_nombre|        aeronave|pasajeros|
++----------+--------+--------------------+----------------------+------------------+----------+--------------+--------------------+----------------+---------+
+|2021-01-01|   00:02|Vuelo Privado con...|             Domestico|          Despegue|       PAR|           ROS|                   0|    PA-PA-28-181|        0|
+|2021-01-01|   00:24|             Regular|             Domestico|        Aterrizaje|       EZE|           GRA|AEROLINEAS ARGENT...|     BO-B737-8MB|       70|
+|2021-01-01|   00:26|             Regular|             Domestico|        Aterrizaje|       EZE|           ECA|AEROLINEAS ARGENT...|      BO-737-800|       70|
+|2021-01-01|   00:29|             Regular|             Domestico|        Aterrizaje|       EZE|           SAL|AEROLINEAS ARGENT...|    BO-B-737-76N|       12|
+|2021-01-01|   00:37|             Regular|             Domestico|        Aterrizaje|       EZE|           TUC|AEROLINEAS ARGENT...|EMB-ERJ190100IGW|       26|
+|2021-01-01|   00:59|             Regular|         Internacional|        Aterrizaje|       EZE|          SBGR|TURK HAVA YOLLARI...|               0|       62|
+|2021-01-01|   01:00|Vuelo Privado con...|             Domestico|        Aterrizaje|       ROS|           PAR|                   0|    PA-PA-28-181|        0|
+|2021-01-01|   01:12|             Regular|         Internacional|          Despegue|       EZE|          MMMX|AEROVIAS DE MEXIC...|               0|      198|
+|2021-01-01|   01:52|             Regular|         Internacional|          Despegue|       EZE|          KDFW|AMERICAN AIRLINES...|               0|      193|
+|2021-01-01|   02:08|             Regular|         Internacional|          Despegue|       EZE|          KMIA|AMERICAN AIRLINES...|               0|      255|
+|2021-01-01|   02:39|             Regular|         Internacional|          Despegue|       EZE|          SBGR|TURK HAVA YOLLARI...|               0|      103|
+|2021-01-01|   02:46|             Regular|         Internacional|          Despegue|       EZE|          KIAH|UNITED AIRLINES I...|               0|      229|
+|2021-01-01|   03:30|             Regular|         Internacional|        Aterrizaje|       EZE|          MPTO|COMPAÑIA PANAMEÑA...|               0|       21|
+|2021-01-01|   05:01|             Regular|         Internacional|          Despegue|       EZE|          MPTO|COMPAÑIA PANAMEÑA...|               0|      132|
+|2021-01-01|   06:40|             Regular|         Internacional|        Aterrizaje|       EZE|          SBGR|       QATAR AIRWAYS|               0|        0|
+|2021-01-01|   07:09|             Regular|             Domestico|          Despegue|       EZE|           ECA|AEROLINEAS ARGENT...|     BO-B737-800|       35|
+|2021-01-01|   08:10|             Regular|             Domestico|          Despegue|       EZE|           JUJ|AEROLINEAS ARGENT...|EMB-ERJ190100IGW|       46|
+|2021-01-01|   08:14|             Regular|             Domestico|          Despegue|       EZE|           BAR|AEROLINEAS ARGENT...|      BO-737-800|       81|
+|2021-01-01|   08:30|             Regular|         Internacional|          Despegue|       EZE|          SEQM|       QATAR AIRWAYS|               0|        0|
+|2021-01-01|   08:35|             Regular|             Domestico|          Despegue|       EZE|           USU|AEROLINEAS ARGENT...|     BO-B737-8MB|       74|
++----------+--------+--------------------+----------------------+------------------+----------+--------------+--------------------+----------------+---------+
+only showing top 20 rows
+
+##Creamos la vista fitrada para usar en Hive
+>>> df_2122_filter.createOrReplaceTempView("df_2122_cast_final")
+
+##Chequeamos la vista realizada
+>>> spark.sql("DESCRIBE df_2122_cast_final").show()
++--------------------+---------+-------+
+|            col_name|data_type|comment|
++--------------------+---------+-------+
+|               fecha|     date|   null|
+|            hora_utc|   string|   null|
+|      clase_de_vuelo|   string|   null|
+|clasificacion_de_...|   string|   null|
+|  tipo_de_movimiento|   string|   null|
+|          aeropuerto|   string|   null|
+|      origen_destino|   string|   null|
+|    aerolinea_nombre|   string|   null|
+|            aeronave|   string|   null|
+|           pasajeros|      int|   null|
++--------------------+---------+-------+
+
+
 ## En HIVE, damos de alta la BD que llamamos examen_final, luego chequeamos el alta correcta, y finalmente elegimos usar la BD que dimos de alta
 
 hive> create database examen_final;
@@ -151,11 +204,38 @@ Time taken: 0.027 seconds, Fetched: 1 row(s)
 hive> use examen_final;
 OK
 
-##Damos de alta la tabla 
-hive> CREATE EXTERNAL TABLE IF NOT EXISTS examen_final.aeropuerto_tabla (fecha date, hora_utc string, clase_de_vuelo string, clasificacion_de_vuelo string, tipo_de_movimiento string, aeropuerto string, origen_destino string, aerolinea_nombre string, aeronave string, pasajeros int)
-    > row format delimited
-    > fields terminated by ','
-    > location '/tables/external/examen_final/aeropuerto_tabla';
+##Damos de alta las dos tablas 
+DROP TABLE IF EXISTS examen_final.aeropuerto_detalle_tabla;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS examen_final.aeropuerto_detalles_tabla (
+    aeropuerto STRING, oac STRING, iata STRING, tipo STRING, denominacion STRING,
+    coordenadas STRING, latitud STRING, longitud STRING, elev FLOAT, uom_elev STRING,
+    ref STRING, distancia_ref FLOAT, direccion_ref STRING, condicion STRING,
+    control STRING, region STRING, uso STRING, trafico STRING, sna STRING,
+    concesionado STRING, provincia STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION '/tables/external/examen_final/aeropuerto_detalle_tabla';
+
+
+DROP TABLE IF EXISTS examen_final.aeropuerto_tabla;
+CREATE EXTERNAL TABLE IF NOT EXISTS examen_final.aeropuerto_tabla (
+    fecha DATE,
+    hora_utc STRING,
+    clase_de_vuelo STRING,
+    clasificacion_de_vuelo STRING,
+    tipo_de_movimiento STRING,
+    aeropuerto STRING,
+    origen_destino STRING,
+    aerolinea_nombre STRING,
+    aeronave STRING,
+    pasajeros INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION '/tables/external/examen_final/aeropuerto_tabla';
+
 OK
 Time taken: 0.863 seconds
 hive>
@@ -168,23 +248,14 @@ DataFrame[]
 >>>
 
 #Chequeo que en hive esté la tabla
-      hive> select * from aeropuerto_tabla limit 10;
+      hive> select * from aeropuerto_tabla limit 5;
 OK
-2021-01-01      00:02   Vuelo Privado con Matrícula Nacional    Domestico       Despegue        PAR
-ROS     0       PA-PA-28-181    0
-2021-01-01      00:24   Regular Domestico       Aterrizaje      EZE     GRA     AEROLINEAS ARGENTINAS SABO-B737-8MB     70
-2021-01-01      00:26   Regular Domestico       Aterrizaje      EZE     ECA     AEROLINEAS ARGENTINAS SABO-737-800      70
-2021-01-01      00:29   Regular Domestico       Aterrizaje      EZE     SAL     AEROLINEAS ARGENTINAS SABO-B-737-76N    12
-2021-01-01      00:37   Regular Domestico       Aterrizaje      EZE     TUC     AEROLINEAS ARGENTINAS SAEMB-ERJ190100IGW        26
-2021-01-01      00:59   Regular Internacional   Aterrizaje      EZE     SBGR    TURK HAVA YOLLARI (TURKISH AIRLINES CO.)        0       62
-2021-01-01      01:00   Vuelo Privado con Matrícula Nacional    Domestico       Aterrizaje      ROS
-PAR     0       PA-PA-28-181    0
-2021-01-01      01:12   Regular Internacional   Despegue        EZE     MMMX    AEROVIAS DE MEXICO - AEROMEXICO 0       198
-2021-01-01      01:52   Regular Internacional   Despegue        EZE     KDFW    AMERICAN AIRLINES INC.
-0       193
-2021-01-01      02:08   Regular Internacional   Despegue        EZE     KMIA    AMERICAN AIRLINES INC.
-0       255
-Time taken: 1.364 seconds, Fetched: 10 row(s)
+2021-01-01      00:02   Vuelo Privado con Matrícula Nacional    Domestico       Despegue        PAR     ROS     0      PA-PA-28-181                                                                               0
+2021-01-01      00:24   Regular Domestico       Aterrizaje      EZE     GRA     AEROLINEAS ARGENTINAS SA        BO-B737-8MB                                                                                       70
+2021-01-01      00:26   Regular Domestico       Aterrizaje      EZE     ECA     AEROLINEAS ARGENTINAS SA        BO-737-800                                                                                        70
+2021-01-01      00:29   Regular Domestico       Aterrizaje      EZE     SAL     AEROLINEAS ARGENTINAS SA        BO-B-737-76N                                                                                      12
+2021-01-01      00:37   Regular Domestico       Aterrizaje      EZE     TUC     AEROLINEAS ARGENTINAS SA        EMB-ERJ190100IGW                                                                                  26
+Time taken: 0.398 seconds, Fetched: 5 row(s)
 hive> describe aeropuerto_tabla;
 OK
 fecha                   date
@@ -327,13 +398,104 @@ root
 
 
 ##Chequeamos la vista generada usando SQL 
+>>> spark.sql("DESCRIBE df2_v").show()
 
++-------------+---------+-------+
+|     col_name|data_type|comment|
++-------------+---------+-------+
+|   aeropuerto|   string|   null|
+|          oac|   string|   null|
+|         iata|   string|   null|
+|         tipo|   string|   null|
+| denominacion|   string|   null|
+|  coordenadas|   string|   null|
+|      latitud|   string|   null|
+|     longitud|   string|   null|
+|         elev|    float|   null|
+|     uom_elev|   string|   null|
+|          ref|   string|   null|
+|distancia_ref|    float|   null|
+|direccion_ref|   string|   null|
+|    condicion|   string|   null|
+|      control|   string|   null|
+|       region|   string|   null|
+|          uso|   string|   null|
+|      trafico|   string|   null|
+|          sna|   string|   null|
+| concesionado|   string|   null|
++-------------+---------+-------+
+only showing top 20 rows
 
+###Envío la vista del df a hive
+>>>> spark.sql("insert into examen_final.aeropuerto_detalles_tabla select * from df2_v")
 
+##Chequeo que en hive esté la tabla
+hive> select * from aeropuerto_detalles_tabla limit 5;
+OK
+ACB     NULL    NULL    Aeródromo       CORONEL BOGADO/AGROSERVICIOS    "33°16'20""S  60°34'14""W"      -60.57066000   -33.27226000                                                                               44.0     Metros  Coronel Bogado  6.0     NE      PRIVADO NOCONTROL       RACE    AEROAPP Nacional        NO      NO     SANTA FÉ
+ACH     NULL    NULL    Aeródromo       GENERAL ACHA    "37°24' 6""S  64°36'49""W"      -64.61351000    -37.40164000   277.0                                                                                      Metros   General Acha    3.0     SO      PUBLICO NOCONTROL       RACE    CIVIL   Nacional        NO      NO      LA PAMPA
+ACM     NULL    NULL    Aeródromo       ARRECIFES/LA CURA MALAL "34° 4'33""S  60° 8'30""W"      -60.14170000    -34.07574000                                                                                      37.0     Metros  Arrecifes       4.0     OSO     PRIVADO NOCONTROL       RACE    CIVIL   Nacional        NO      NO     BUENOS AIRES
+ADO     SAWD    PUD     Aeródromo       PUERTO DESEADO  "47°44' 6""S  65°54'15""W"      -65.90410000    -47.73511000   82.0                                                                                       Metros   Puerto Deseado  2.0     N       PUBLICO AERADIO RASU    CIVIL   Nacional        NO      NO      SANTA CRUZ
+ADT     NULL    NULL    Aeródromo       BANDERA/AGROSERVICIOS DOÑA TERESA       "28°51'19""S  62°15'53""W"      -62.26462000                                                                                      -28.85541000     75.0    Metros  Bandera 4.0     N       PRIVADO NOCONTROL       RANO    AEROAPP Nacional        NO     NO                                                                                         SANTIAGO DEL ESTERO
+Time taken: 0.207 seconds, Fetched: 5 row(s)
 
+hive> describe formatted aeropuerto_detalles_tabla;
+OK
+# col_name              data_type               comment
 
-&&&&&&&
+aeropuerto              string
+oac                     string
+iata                    string
+tipo                    string
+denominacion            string
+coordenadas             string
+latitud                 string
+longitud                string
+elev                    float
+uom_elev                string
+ref                     string
+distancia_ref           float
+direccion_ref           string
+condicion               string
+control                 string
+region                  string
+uso                     string
+trafico                 string
+sna                     string
+concesionado            string
+provincia               string
 
+# Detailed Table Information
+Database:               examen_final
+Owner:                  hadoop
+CreateTime:             Wed Jan 08 15:13:01 ART 2025
+LastAccessTime:         UNKNOWN
+Retention:              0
+Location:               hdfs://172.17.0.2:9000/tables/external/examen_final/aeropuerto_detalle_tabla
+Table Type:             EXTERNAL_TABLE
+Table Parameters:
+        EXTERNAL                TRUE
+        numFiles                1
+        totalSize               129695
+        transient_lastDdlTime   1736979731
+
+# Storage Information
+SerDe Library:          org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
+InputFormat:            org.apache.hadoop.mapred.TextInputFormat
+OutputFormat:           org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat
+Compressed:             No
+Num Buckets:            -1
+Bucket Columns:         []
+Sort Columns:           []
+Storage Desc Params:
+        field.delim             ,
+        serialization.format    ,
+Time taken: 0.071 seconds, Fetched: 49 row(s)
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 =======
 ##Damos de alta la tabla 
 hive> CREATE EXTERNAL TABLE IF NOT EXISTS examen_final.aeropuerto_detalles_tabla (
