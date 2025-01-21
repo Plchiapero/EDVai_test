@@ -503,3 +503,13 @@ df_cast_nombres = spark.sql("""SELECT CAST(fecha AS DATE) AS fecha, CAST(Hora_UT
 ******************
 ******************
 
+Ej 1 TAREA 3:
+
+Incorporamos al dag a los archivos ingest.sh y transformation.py al DAG que va a correr en Airflow. Los dos van a responder al script ingest-transformation.py
+
+******************
+******************
+******************
+******************
+
+
