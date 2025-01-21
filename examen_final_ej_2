@@ -1,1 +1,0 @@
-Incorporamos al dag a los archivos ingest.sh y transformation.py al DAG que va a correr en Airflow. Los dos van a responder al script ingest-transformation.py
