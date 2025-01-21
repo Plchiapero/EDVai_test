@@ -499,17 +499,26 @@ Time taken: 0.071 seconds, Fetched: 49 row(s)
 df_cast_nombres = spark.sql("""SELECT CAST(fecha AS DATE) AS fecha, CAST(Hora_UTC AS STRING) AS hora_UTC, CAST("Clase de Vuelo (todos los vuelos)" AS STRING) AS clase_de_vuelo,CAST(Clasificación_Vuelo AS STRING) AS clasificacion_de_vuelo, CAST(Tipo_de_Movimiento AS STRING) AS tipo_de_movimiento, CAST(Aeropuerto AS STRING) AS aeropuerto, CAST("Origen / Destino" AS STRING) AS origen_destino, CAST(Aerolinea_Nombre AS STRING) AS aerolinea_nombre, CAST(Aeronave AS STRING) AS aeronave, CAST(pasajeros AS INT) AS pasajeros FROM df_2122_cast_v""")
 
 ******************
-******************
-******************
-******************
 
 Ej 1 TAREA 3:
 
 Incorporamos al dag a los archivos ingest.sh y transformation.py al DAG que va a correr en Airflow. Los dos van a responder al script ingest-transform.py
 
 ******************
+
+##Las respuestas del ejercicio 1 de las tareas 6 a 13 se encuentran en el siguiente enlance de COLAB:
+https://colab.research.google.com/drive/1a7KZbCc7NgrHP1ymWWB-7Wc3vj_2eu8h?usp=sharing
+
 ******************
 ******************
 ******************
+
+##Ejercicio Google Skills Boost - Examen Final
+Los puntos que fueron solicitados en el examen se encuentran desarrollados en el siguiente link
+
+https://docs.google.com/document/d/1eZNAvCEMup4p8P79WW3cFfXQcRdNINvw4Fpjwhw7thw/edit?usp=sharing
+
+
+
 
 
