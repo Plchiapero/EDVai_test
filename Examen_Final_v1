@@ -566,5 +566,7 @@ Time taken: 0.058 seconds, Fetched: 11 row(s)
 
 Ver ingestrentalcars.sh para ver contenido.
 
+3) Se crea script para tomar archivos de HDFS y realizar transformaciones:
 
+Ver transformationrentalcar.py para ver contenido.
 
