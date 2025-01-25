@@ -562,5 +562,9 @@ model                   string
 year                    int
 Time taken: 0.058 seconds, Fetched: 11 row(s)
 
-2)Se crean scripts para ingestar dos files:
+2) Se crea script para ingestar dos files:
+
+Ver ingestrentalcars.sh para ver contenido.
+
+
 
