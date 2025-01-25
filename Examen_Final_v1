@@ -518,7 +518,49 @@ Los puntos que fueron solicitados en el examen se encuentran desarrollados en el
 
 https://docs.google.com/document/d/1eZNAvCEMup4p8P79WW3cFfXQcRdNINvw4Fpjwhw7thw/edit?usp=sharing
 
+><************************************><            ><************************************><
+><************************************><            ><************************************><
+><************************************><            ><************************************><
 
+##Ejercicio 2
 
+1) Creamos en Hive una base de datos llamada car_rental_db y una tabla llamada car_rental_analytics con los campos dados:
 
+hive> 
+CREATE DATABASE IF NOT EXISTS car_rental_db;
+USE car_rental_db;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS car_rental_db.car_rental_analytics (
+    >     fuel_type STRING,
+    >     rating INT,
+    >     renter_trips_taken INT,
+    >     review_count INT,
+    >     city STRING,
+    >     state_name STRING,
+    >     owner_id INT,
+    >     rate_daily INT,
+    >     make STRING,
+    >     model STRING,
+    >     year INT
+    > )
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > LOCATION '/tables/external/car_rental_db/car_rental_analytics';
+
+hive>  describe car_rental_analytics;
+OK
+fuel_type               string
+rating                  int
+renter_trips_taken      int
+review_count            int
+city                    string
+state_name              string
+owner_id                int
+rate_daily              int
+make                    string
+model                   string
+year                    int
+Time taken: 0.058 seconds, Fetched: 11 row(s)
+
+2)Se crean scripts para ingestar dos files:
 
