@@ -502,7 +502,7 @@ df_cast_nombres = spark.sql("""SELECT CAST(fecha AS DATE) AS fecha, CAST(Hora_UT
 
 Ej 1 TAREA 3:
 
-Incorporamos al dag a los archivos ingest.sh y transformation.py al DAG que va a correr en Airflow. Los dos van a responder al script ingest-transform.py
+Incorporamos al DAG a los archivos ingest.sh y transformation.py al DAG que va a correr en Airflow. Los dos van a responder al script ingest-transform.py
 
 ******************
 
@@ -570,3 +570,9 @@ Ver ingestrentalcars.sh para ver contenido.
 
 Ver transformationrentalcar.py para ver contenido.
 
+4) Se realiza DAG en Airflow para orquestar los puntos anteriores.
+
+5) Para ver los resultados de las consultas en la BD ir al siguiente archivo de Colab
+https://colab.research.google.com/drive/1Xoma6TvM0mdKLuo84A9r7BZInxB0wg8p?usp=sharing
+
+6) 
