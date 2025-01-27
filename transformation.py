@@ -40,9 +40,14 @@ df_2122_cast.createOrReplaceTempView("df_2122_cast_v")
 df_2.createOrReplaceTempView("df2_v")
 
 ##Casteamos de acuerdo a lo solicitado en el punto del Schema 1
-df_cast_nombres = spark.sql("SELECT to_date(fecha, 'dd/MM/yyyy') AS date, CAST(`Hora UTC` AS STRING) AS hora_utc, CAST(`Clase de Vuelo (todos los vuelos)` AS STRING) AS clase_de_vuelo, CAST(`Clasificaci      n >uel
-##Generamos una vista para usar en SQL
+df_cast_nombres = spark.sql("SELECT to_date(fecha, 'yyyy/MM/dd') AS date, CAST(`Hora UTC` AS STRING) AS hora_utc,\
+                            CAST(`Clase de Vuelo (todos los vuelos)` AS STRING) AS clase_de_vuelo, CAST(`Clasificaci\u00f3n Vuelo` AS \
+                            STRING) AS clasificacion_de_vuelo, CAST(`Tipo de Movimiento` AS STRING) AS tipo_de_movimiento, \
+                            CAST(aeropuerto AS STRING) AS aeropuerto, CAST(`Origen / Destino` AS STRING) AS origen_destino, \
+                            CAST(`Aerolinea Nombre` AS STRING) AS aerolinea_nombre, CAST(aeronave AS STRING) AS aeronave, \
+                            COALESCE(CAST(pasajeros AS INTEGER), 0) AS pasajeros FROM df_2122_cast_v")
 
+##Generamos una vista para usar en SQL
 df_cast_nombres.createOrReplaceTempView("df_2122_cast_v_final")
 
 ##Chequeamos la vista generada usando SQL
