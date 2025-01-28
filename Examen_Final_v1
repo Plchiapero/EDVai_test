@@ -575,4 +575,34 @@ Ver transformationrentalcar.py para ver contenido.
 5) Para ver los resultados de las consultas en la BD ir al siguiente archivo de Colab
 https://colab.research.google.com/drive/1Xoma6TvM0mdKLuo84A9r7BZInxB0wg8p?usp=sharing
 
-6) 
+6) Con respecto a este punto, nos falta por parte del cliente las preguntas claves que van a querer responder para poder definir de mejor manera que columnas y cuales conexiones \
+extras podríamos realizar para que sus dashboards puedan estar más alineados con lo que necesitan.
+Como preguntas que agregaría para enriquecer la info que se tuviera disposible, serían:
+
+a- ¿Cuál es la duración promedio de los alquileres para cada tipo de vehículo?
+b- ¿Cómo influye la antigüedad del vehículo en el rating promedio?
+c- ¿Cuáles son los vehículos más rentables en cada zona geográfica?
+d- ¿Cómo varía la demanda de alquileres según la época del año?
+
+7) Arquitectura alternativa:
+
+Cloud (AWS):
+
+* Ingesta: AWS Glue, AWS Kinesis (para streaming).
+* Almacenamiento: AWS S3, AWS Redshift (Data Warehouse).
+* Procesamiento: AWS EMR (Spark), AWS Lambda.
+* Orquestación: AWS Step Functions, AWS MWAA (Managed Workflows for Apache Airflow).
+* Visualización: Amazon QuickSight.
+Esta arquitectura ofrece escalabilidad, confiabilidad y administración simplificada.
+
+ Además podemos pensar en resolverlo usando el servicio de GCP donde las distintas etapas serían:
+
+* Ingesta: Los archivos CSV se cargan a un bucket de Cloud Storage.
+      Opcionalmente, una Cloud Function o un trabajo de Dataflow pueden realizar preprocesamientos básicos.
+* Transformación: Un DAG en Cloud Composer se encarga de lanzar un trabajo de Dataproc. El trabajo de Dataproc ejecuta el script \
+      de transformación de datos (escrito en PySpark u otro lenguaje compatible con Spark).
+* Carga: El script de transformación escribe los datos transformados en una tabla de BigQuery.
+* Orquestación: Cloud Composer ejecuta el DAG que define el flujo de trabajo, incluyendo las dependencias entre las tareas \
+      (ingesta -> transformación -> carga).
+* Visualización y análisis: Looker Studio se conecta a BigQuery para crear dashboards y reportes.
+
