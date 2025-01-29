@@ -8,7 +8,8 @@ img src="https://cdn.prod.website-files.com/61d5f00789a4ab4d52adcd5f/61f40048bdb
   <h2><em>Creando el pipeline de datos.</em></h2>
 <div align="left">
 <h2 class="cursos-h2">Examen Final</h2>
-  <p class="cursos-paragraph"><strong>Ejercicio 1</strong><br>Aviacion Civil<br><br><strong>Ejercicio 2</strong><br>Alquileres de Automoviles<br><br>&zwj;</p>
+  <p class="cursos-paragraph"><strong>Ejercicio 1</strong><br>Aviacion Civil<br> clickear [AQUÍ](https://s11-18-m-python-react.vercel.app), 
+    <br><strong>Ejercicio 2</strong><br>Alquileres de Automoviles<br><br>&zwj;</p>
 
 
 
